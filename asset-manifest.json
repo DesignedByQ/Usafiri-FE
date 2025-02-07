@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/Usafiri-FE/static/css/main.a6d0112a.css",
+    "main.js": "/Usafiri-FE/static/js/main.75f98bdb.js",
+    "static/js/453.98ec08b4.chunk.js": "/Usafiri-FE/static/js/453.98ec08b4.chunk.js",
+    "index.html": "/Usafiri-FE/index.html",
+    "main.a6d0112a.css.map": "/Usafiri-FE/static/css/main.a6d0112a.css.map",
+    "main.75f98bdb.js.map": "/Usafiri-FE/static/js/main.75f98bdb.js.map",
+    "453.98ec08b4.chunk.js.map": "/Usafiri-FE/static/js/453.98ec08b4.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a6d0112a.css",
+    "static/js/main.75f98bdb.js"
+  ]
+}
