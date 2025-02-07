@@ -1,0 +1,111 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .title {
+    text-decoration: underline;
+    font-size: 36px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 10px;
+  }
+  
+  .subtitle {
+    font-size: 16px;
+    color: white;
+    margin-bottom: 20px;
+  }
+  
+  /* Logo */
+  .logo {
+    margin-bottom: 15px;
+  }
+  
+  .logo-img {
+    width: 400px;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  /* Form Styles */
+  .section-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 15px 0;
+  }
+  
+  .input-field, .button {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 10px auto;
+    display: block;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+  
+  .button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Tagline */
+  .tagline {
+    font-style: italic;
+    margin: 20px 0;
+  }
+  
+  /* Contact Section */
+  .contact {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+  }
+
+  /* Header Section */
+  .header {
+    margin-top: 0px;
+    padding: 10px;
+    margin-bottom: 15px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+  }
+  
+  .contact-title {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .contact-info {
+    font-size: 14px;
+  }
+
+  .error-text {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+  }
