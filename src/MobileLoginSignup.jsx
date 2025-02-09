@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./MobileLoginSignup.css";
+import "./Styles.css";
 import OTPverification from "./OTPverification";
 import { useNavigate } from "react-router-dom";
 
@@ -46,7 +46,7 @@ const MobileLoginSignup = () => {
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(newData),
       });
 
       const result = await response.json(); // Parse JSON response
@@ -59,7 +59,7 @@ const MobileLoginSignup = () => {
         setErrorMessageSignUp("");
         
         if (response.status === 200 || response.status === 201) {
-          navigate("/verifyOTP", { state: { email: data.email } }); // Pass email via state
+          navigate("/verifyOTP", { state: { email: data.email, phone: data.phone } }); // Pass email via state
         }
 
       } else {

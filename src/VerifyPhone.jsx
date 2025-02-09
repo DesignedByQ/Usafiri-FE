@@ -1,16 +1,14 @@
 import React, {useState} from "react";
-import"./Styles.css";
 import { useLocation, useNavigate } from "react-router-dom";
-import VerifyPhone from "./VerifyPhone" 
+import"./Styles.css";
 
-
-const OTPverification = () => {
+const VerifyPhone = () => {
 
     const navigate = useNavigate();
 
     const location = useLocation();
     const email = location.state?.email || ""; // Get email from navigation state
-    const phone = location.state?.phone || ""; // Get email from navigation state
+    const phone = location.state?.phone || ""; // Get phone from navigation state
 
     const [otpData, setOtpData] = useState({ otp: "" });
 
@@ -28,47 +26,27 @@ const OTPverification = () => {
         }
     
         try {
-
-          const newOTPresponse = await fetch(url+`/new_otp/${phone}`, {
+          //console.log(url)
+          const response = await fetch(url+`/${data.otp}/${email}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
           });
-
-          const newOTPresult = await newOTPresponse.json(); // Parse JSON response
     
-          if (newOTPresponse.ok) {
-
-            console.log("Full newOTPResponse:", newOTPresult);
-            console.log(`Status: ${newOTPresult.status} - ${newOTPresponse.statusText || "N/A"}`);
-            console.log(`Success message: ${newOTPresult.message}`);
+          const result = await response.json(); // Parse JSON response
+    
+          if (response.ok) {
+            console.log("Full Response:", result);
+            console.log(`Status: ${result.status} - ${response.statusText || "N/A"}`);
+            console.log(`Success message: ${result.message}`);
             setErrorMessage(""); // Clear any previous error on success
-                    
-            const response = await fetch(url+`/confirm_otp/${data.otp}/${email}/${phone}`, {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-            });
-    
-            const result = await response.json(); // Parse JSON response
 
-            if (response.ok) {
-
-              console.log("Full Response:", result);
-              console.log(`Status: ${result.status} - ${response.statusText || "N/A"}`);
-              console.log(`Success message: ${result.message}`);
-              setErrorMessage(""); // Clear any previous error on success
-
-              if (response.status === 202 && newOTPresponse.status === 201) {
-                navigate("/verifyPhoneOTP", { state: { email: data.email, phone: data.phone } }); // Pass email via state
-              }
-      
-            } else {
-              console.error(`Error ${result.status}: ${result.message}`);
-              setErrorMessage(result.message || "An error occurred. Please try again."); // Set error message from backend
-            }
-
+            // if (response.status === 200 || response.status === 201) {
+            //   navigate("/VerifyPhone", { state: { email: data.email } }); // Pass email via state
+            // }
+        
           } else {
-            console.error(`Error ${newOTPresult.status}: ${newOTPresult.message}`);
-            setErrorMessage(newOTPresult.message || "An error occurred. Please try again."); // Set error message from backend
+            console.error(`Error ${result.status}: ${result.message}`);
+            setErrorMessage(result.message || "An error occurred. Please try again."); // Set error message from backend
           }
     
         } catch (error) {
@@ -95,7 +73,7 @@ const OTPverification = () => {
             </div>
             
             {/* Submit OTP Section */}
-            <p className="tagline">New users will receive an OTP via email, and via phone for existing users.</p>
+            <p className="tagline">Your account has been created. Now confirm your <strong>phone number</strong> to continue.</p>
             <h2 className="section-title">Submit OTP</h2>
             <input 
               type="text" 
@@ -107,7 +85,7 @@ const OTPverification = () => {
             />
 
             {errorMessage && <p className="error-text">{errorMessage}</p>} {/* Display error message in red */}
-            <button className="button" onClick={() => handleSubmit("http://localhost:1100/usafiri/authenticator", otpData)}>
+            <button className="button" onClick={() => handleSubmit("http://localhost:1100/usafiri/authenticator/confirm_otp", otpData)}>
             Submit OTP
             </button>
 
@@ -124,7 +102,6 @@ const OTPverification = () => {
     </div>
   );
 
-
 }
 
-export default OTPverification;
+export default VerifyPhone;
