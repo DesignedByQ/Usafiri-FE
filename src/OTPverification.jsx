@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState,useEffect} from "react";
 import"./Styles.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import VerifyPhone from "./VerifyPhone" 
@@ -14,7 +14,54 @@ const OTPverification = () => {
 
     const [otpData, setOtpData] = useState({ otp: "" });
 
+    const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
+    const [otpErrorMessage, setOTPErrorMessage] = useState("");
+
+    const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutes in seconds
+
+    // Function to request a new OTP
+    const newOTP = async () => {
+        try {
+            const response = await fetch(`http://localhost:1100/usafiri/authenticator/new_otp/${email}`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" },
+            });
+
+            if (response.ok) {
+                console.log("New OTP request sent successfully.");
+                setSuccessMessage("New OTP request sent successfully.") 
+                setOTPErrorMessage("")
+
+            } else {
+                console.error("Failed to send new OTP.");
+                setOTPErrorMessage("Failed to send new OTP.")
+                setSuccessMessage("")
+            }
+        } catch (error) {
+            console.error("Error sending OTP request:", error);
+            setOTPErrorMessage("Error sending OTP request:", error)
+            setSuccessMessage("")
+        }
+    };
+
+    useEffect(() => {
+        if (timeLeft <= 0) {
+            return;
+        }
+
+        const timer = setInterval(() => {
+            setTimeLeft((prevTime) => prevTime - 1);
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [timeLeft]);
+
+    const formatTime = (seconds) => {
+        const minutes = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${minutes}:${secs < 10 ? `0${secs}` : secs}`;
+    };
 
     const handleChange = (e, setData) => {
         const { name, value } = e.target;
@@ -95,7 +142,7 @@ const OTPverification = () => {
             </div>
             
             {/* Submit OTP Section */}
-            <p className="tagline">New users will receive an OTP via email, and via phone for existing users.</p>
+            <p className="tagline">New users will receive an OTP via email, and via phone for existing users. Check your junk folder before requesting a new one.</p>
             <h2 className="section-title">Submit OTP</h2>
             <input 
               type="text" 
@@ -109,6 +156,25 @@ const OTPverification = () => {
             {errorMessage && <p className="error-text">{errorMessage}</p>} {/* Display error message in red */}
             <button className="button" onClick={() => handleSubmit("http://localhost:1100/usafiri/authenticator", otpData)}>
             Submit OTP
+            </button>
+
+            {/* Home Button Section */}
+            <p className="tagline">Confirm the OTP within {" "}
+                
+                <span style={{ fontSize: "14px", fontWeight: "bold", color: timeLeft <= 5 * 60 ? "red" : "green" }}>
+                    {formatTime(timeLeft)}
+                </span> 
+                
+            {" "} minutes or request another one if you didn't receive it.</p>
+
+            <button className="button" onClick={() => newOTP()}>
+                Request New OTP
+            </button>
+            {successMessage && <p className="success-text">{successMessage}</p>} {/* Display success message in green */}
+            {otpErrorMessage && <p className="error-text">{otpErrorMessage}</p>} {/* Display error message in red */}
+
+            <button className="button" onClick={() => navigate("/")}>
+                Start Again add delete user after timeout or click here
             </button>
 
             </div>

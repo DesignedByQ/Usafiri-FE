@@ -10,7 +10,7 @@ const MobileLoginSignup = () => {
   const [loginData, setLoginData] = useState({ email: "", phone: "" });
   const [signUpData, setSignUpData] = useState({
     email: "",
-    region: "", //fix later
+    region: "",
     phone: "",
     DOB: "",
     password: "",
