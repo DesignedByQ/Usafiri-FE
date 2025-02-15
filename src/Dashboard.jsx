@@ -6,7 +6,10 @@ import "./Styles.css";
 const Dashboard = () => {
 
 
+return(
 
+    <div>Hi</div>
+)
 
 
 }

@@ -2,30 +2,41 @@ import React, {useState, useEffect} from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import"./Styles.css";
 
+
+//then test login failure
 const VerifyPhone = () => {
 
     const navigate = useNavigate();
 
     const location = useLocation();
-    const email = location.state?.email || ""; // Get email from navigation state
-    const phone = location.state?.phone || ""; // Get phone from navigation state
+
+    // Get from navigation state or local storage
+    const email = location.state?.email || localStorage.getItem("email") || ""; 
+    const phone = location.state?.phone || localStorage.getItem("phone") || "";
 
     const [otpData, setOtpData] = useState({ otp: "" });
 
     const [errorMessage, setErrorMessage] = useState("");
 
-    const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutes in seconds
+    //const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutes in seconds
+
+    const [timeLeft, setTimeLeft] = useState(() => {
+      const savedTime = localStorage.getItem('timeLeft');
+      return savedTime ? parseInt(savedTime, 10) : 300; // Default to 5 minutes if no saved time
+    });
 
     // Function to handle the deletion request
     const deleteUser = async () => {
         try {
             const response = await fetch(`http://localhost:1100/usafiri/authenticator/delete_user/${email}`, {
                 method: "GET",
-                headers: { "Content-Type": "application/json" },
             });
 
+            const result = await response.json(); // Parse JSON response
+
             if (response.ok) {
-                console.log("User deletion request sent successfully.");
+                console.log("Phone OTP not confirmed. User deletion request sent successfully.");
+                console.log("Full response:", result);
 
                 if (response.status === 200) {
                     navigate("/"); // Go home
@@ -33,23 +44,36 @@ const VerifyPhone = () => {
 
             } else {
                 console.error("Failed to send user deletion request.");
+                console.error("Full error:", result);
             }
+
         } catch (error) {
             console.error("Error sending delete request:", error);
+            console.error("Full error:", error);
         }
     };
 
     useEffect(() => {
-        if (timeLeft <= 0) {
-            deleteUser(); // Call deleteUser when timer hits 0
-            return;
-        }
+      const savedTimeLeft = localStorage.getItem('timeLeft');
+      if (savedTimeLeft) {
+          setTimeLeft(parseInt(savedTimeLeft, 10));
+      }
+    }, []);
+  
+    useEffect(() => {
+      if (timeLeft <= 0) {
+          deleteUser(); // Call deleteUser when timer hits 0
+          localStorage.removeItem('timeLeft');
+          return;
+      }
 
-        const timer = setInterval(() => {
-            setTimeLeft((prevTime) => prevTime - 1);
-        }, 1000);
+      localStorage.setItem('timeLeft', timeLeft);
 
-        return () => clearInterval(timer);
+      const timer = setInterval(() => {
+          setTimeLeft((prevTime) => prevTime - 1);
+      }, 1000);
+
+      return () => clearInterval(timer);
     }, [timeLeft]);
 
     const formatTime = (seconds) => {
@@ -68,19 +92,26 @@ const VerifyPhone = () => {
           alert("Please fill in all fields.");
           return;
         }
+
+        let formattedPhone = "";
+
+        if(phone.startsWith("0")){
+          formattedPhone = "+255" + phone.substr(1,10)
+        } else if(phone.startsWith("7")){
+          formattedPhone = "+255" + phone
+        }
     
         try {
           //console.log(url)
-          const response = await fetch(url+`/${data.otp}/${email}/${phone}`, {
+          const response = await fetch(url+`/${data.otp}/${email}/${formattedPhone}`, {
             method: "GET",
-            headers: { "Content-Type": "application/json" },
           });
     
           const result = await response.json(); // Parse JSON response
     
           if (response.ok) {
             console.log("Full Response:", result);
-            console.log(`Status: ${result.status} - ${response.statusText || "N/A"}`);
+            console.log(`Status: ${result.status} - ${result.statusText || "N/A"}`);
             console.log(`Success message: ${result.message}`);
             setErrorMessage(""); // Clear any previous error on success
 
@@ -89,13 +120,14 @@ const VerifyPhone = () => {
             }
         
           } else {
+            console.error("Full Error:", result);
             console.error(`Error ${result.status}: ${result.message}`);
-            setErrorMessage(result.message || "An error occurred. Please try again."); // Set error message from backend
+            setErrorMessage(result.message || "An error occurred whilst attempting to confirm the OTP. Please try again."); // Set error message from backend
           }
     
         } catch (error) {
           console.error("Fetch Error:", error);
-          setErrorMessage("Network error. Please check your connection.");
+          setErrorMessage("Network error. Please check your connection or contact admin.");
         }
     };
 
@@ -134,7 +166,7 @@ const VerifyPhone = () => {
             </button>
 
             {/* Home Button Section */}
-            <p className="tagline">Confirm the OTP within 
+            <p className="tagline">Confirm the OTP within {" "}
                 
                 <span style={{ 
                     fontSize: "14px", 
@@ -144,7 +176,7 @@ const VerifyPhone = () => {
                     {formatTime(timeLeft)}
                 </span> 
                 
-            minutes or start the sign up process again.</p>
+            {" "} minutes or start the sign up process again.</p>
 
             <button className="button" onClick={() => {deleteUser(); navigate("/")}}>
                 Start Again

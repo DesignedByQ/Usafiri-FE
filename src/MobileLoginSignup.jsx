@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./Styles.css";
-import OTPverification from "./OTPverification";
 import { useNavigate } from "react-router-dom";
 
 const MobileLoginSignup = () => {
@@ -34,10 +33,13 @@ const MobileLoginSignup = () => {
     const newData = {
       email: data.email,
       region: data.region,
-      phone: data.region + data.phone.substr(1,10),
+      phone: data.phone.startsWith("0") 
+        ? data.region + data.phone.substr(1, 10) 
+        : data.region + data.phone,
       DOB: data.DOB,
       password: data.password,
     }
+    
   
     try {
       console.log("Data being sent: ", data); // Debugging line
@@ -53,7 +55,7 @@ const MobileLoginSignup = () => {
 
       if (response.ok) {
         console.log("Full Response:", result);
-        console.log(`Status: ${result.status} - ${response.statusText || "N/A"}`);
+        console.log(`Status: ${result.status} - ${result.statusText || "N/A"}`);
         console.log(`Success message: ${result.message}`);
         setErrorMessageLogIn(""); // Clear any previous error on success
         setErrorMessageSignUp("");
@@ -73,9 +75,9 @@ const MobileLoginSignup = () => {
     } catch (error) {
       console.error("Fetch Error:", error);
       if(Object.keys(data).length > 2)
-        setErrorMessageSignUp("Network error. Please check your connection.");
+        setErrorMessageSignUp("Network error. Please check your connection or contact admin.");
       else
-        setErrorMessageLogIn("Network error. Please check your connection.");
+        setErrorMessageLogIn("Network error. Please check your connection or contact admin.");
     }
   };
 
